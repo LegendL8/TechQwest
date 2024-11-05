@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">My Suggested Questions</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <a href="{{ url_for('suggestions.suggest') }}" class="btn btn-primary">
+                        Suggest New Question
+                    </a>
+                </div>
+                {% if suggestions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Category</th>
+                                    <th>Difficulty</th>
+                                    <th>Status</th>
+                                    <th>Feedback</th>
+                                    <th>Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for suggestion in suggestions %}
+                                    <tr>
+                                        <td>{{ suggestion.text }}</td>
+                                        <td>{{ suggestion.category.name }}</td>
+                                        <td>{{ suggestion.difficulty }}/5</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'success' if suggestion.status == 'approved' 
+                                                                    else 'danger' if suggestion.status == 'rejected'
+                                                                    else 'warning' }}">
+                                                {{ suggestion.status.title() }}
+                                            </span>
+                                        </td>
+                                        <td>{{ suggestion.feedback or '-' }}</td>
+                                        <td>{{ suggestion.created_at.strftime('%Y-%m-%d') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <p>You haven't suggested any questions yet!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

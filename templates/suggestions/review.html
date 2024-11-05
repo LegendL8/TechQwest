@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Review Question Suggestions</h2>
+            </div>
+            <div class="card-body">
+                {% if suggestions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Category</th>
+                                    <th>Difficulty</th>
+                                    <th>Suggested By</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for suggestion in suggestions %}
+                                    <tr>
+                                        <td>{{ suggestion.text }}</td>
+                                        <td>{{ suggestion.category.name }}</td>
+                                        <td>{{ suggestion.difficulty }}/5</td>
+                                        <td>{{ suggestion.author.username }}</td>
+                                        <td>{{ suggestion.created_at.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('suggestions.review_suggestion', id=suggestion.id) }}"
+                                               class="btn btn-primary btn-sm">Review</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <p>No pending suggestions to review!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

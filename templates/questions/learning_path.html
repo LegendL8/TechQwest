@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="text-center">Your Learning Path</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading">Your Progress</h5>
+                        <p class="mb-0">Current Skill Level: {{ "%.1f"|format(current_user.skill_level) }}/5.0</p>
+                        <p class="mb-0">Total Questions Attempted: {{ current_user.total_attempted }}</p>
+                        <p class="mb-0">Success Rate: {{ "%.1f"|format(current_user.total_correct / current_user.total_attempted * 100 if current_user.total_attempted else 0) }}%</p>
+                    </div>
+
+                    <h4 class="mb-3">Category Performance</h4>
+                    <div class="row">
+                        {% for category, stats in category_performance.items() %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ category }}</h5>
+                                    <p class="mb-1">Success Rate: {{ "%.1f"|format(stats.success_rate) }}%</p>
+                                    <p class="mb-1">Questions Attempted: {{ stats.total_attempts }}</p>
+                                    <div class="progress">
+                                        <div class="progress-bar {{ 'bg-success' if stats.success_rate >= 70 else 'bg-warning' }}" 
+                                             role="progressbar" 
+                                             style="width: {{ stats.success_rate }}%" 
+                                             aria-valuenow="{{ stats.success_rate }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <h4 class="mb-3 mt-4">Recommended Questions</h4>
+                    {% if recommended_questions %}
+                        <div class="list-group">
+                            {% for question in recommended_questions %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ question.text }}</h5>
+                                    <small>Difficulty: {{ question.difficulty }}/5</small>
+                                </div>
+                                <p class="mb-1">Category: {{ question.category.name }}</p>
+                                <small>This question matches your current skill level and helps improve in areas where you need practice.</small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p class="mb-0">No recommended questions available at the moment. Try answering more questions to get personalized recommendations!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

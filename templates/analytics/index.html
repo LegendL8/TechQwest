@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Analytics Dashboard</h1>
+    
+    <div class="row">
+        <!-- Category Performance -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Category Performance</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Daily Success Rate -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Daily Success Rate (Last 30 Days)</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="dailyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Question Performance Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Question Performance</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Category</th>
+                            <th>Difficulty</th>
+                            <th>Success Rate</th>
+                            <th>Total Attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in question_stats %}
+                        <tr>
+                            <td>{{ stat.Question.text }}</td>
+                            <td>{{ stat.Question.category.name }}</td>
+                            <td>{{ stat.Question.difficulty }}/5</td>
+                            <td>{{ "%.1f"|format(stat.correct_attempts / stat.total_attempts * 100 if stat.total_attempts else 0) }}%</td>
+                            <td>{{ stat.total_attempts }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Category Performance Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+new Chart(categoryCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for stat in category_stats %}'{{ stat.name }}',{% endfor %}],
+        datasets: [{
+            label: 'Success Rate (%)',
+            data: [{% for stat in category_stats %}
+                {{ "%.1f"|format(stat.correct_attempts / stat.total_attempts * 100 if stat.total_attempts else 0) }},
+            {% endfor %}],
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
+    }
+});
+
+// Daily Success Rate Chart
+const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+new Chart(dailyCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for stat in daily_stats %}'{{ stat.date }}',{% endfor %}],
+        datasets: [{
+            label: 'Success Rate (%)',
+            data: [{% for stat in daily_stats %}
+                {{ "%.1f"|format(stat.correct_attempts / stat.total_attempts * 100 if stat.total_attempts else 0) }},
+            {% endfor %}],
+            borderColor: 'rgba(54, 162, 235, 1)',
+            tension: 0.1,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
