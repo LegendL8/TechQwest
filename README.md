@@ -40,6 +40,13 @@ A comprehensive Flask-based IT knowledge question management and distribution sy
    python update_categories.py  # Sets up default categories
    ```
 
+⚠️ **SECURITY WARNING**: The default admin credentials are:
+- Username: `admin`
+- Email: `admin@example.com`
+- Password: `adminpass123`
+
+For security reasons, **immediately change these credentials** after your first login. Failing to do so could result in unauthorized access to administrative functions.
+
 5. Run the application:
    ```bash
    python app.py
